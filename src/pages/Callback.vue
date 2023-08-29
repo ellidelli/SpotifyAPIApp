@@ -7,6 +7,8 @@
 <script>
 import axios from 'axios'
 const qs = require('qs');
+import { Buffer } from 'buffer';
+
 
 export default {
   name: 'Callback',
