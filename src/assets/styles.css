@@ -1,0 +1,76 @@
+@font-face {
+    font-family: "Glacial";
+    src: url(fonts/GlacialIndifference-Regular.otf);
+}
+@font-face {
+    font-family: "Moontime";
+    src: url(fonts/MoonTime-Regular.otf);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url("./bg.png");
+    background-size: cover;
+    color: white;
+}
+
+section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+h3 {
+    text-align: center;
+    font-size: 200px;
+    font-family: "Moontime";
+    margin: 20px;
+}
+
+button {
+    font-family: "Glacial";
+    text-decoration: none;
+    font-size: 20px;
+    text-align: center;
+    text-overflow: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    box-shadow: 4px 4px 6px rgba(23, 18, 18, 0.7);
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+nav {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+nav ul {
+    display: flex;
+    float: right;
+    list-style-type: none;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    font-family: "Glacial";
+    color: white;
+    padding: 1vh 3vw;
+    font-size: 20px;
+}
+
+nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+}
+
+.format {
+    display: flex;
+    flex-direction: column;
+}

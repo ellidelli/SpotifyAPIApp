@@ -1,7 +1,9 @@
-<template>
+<template class = "web">
   <div>
-    <h3>Home</h3>
-    <button @click="loginToSpotify">Login to Spotify</button>
+    <section>
+      <h3>check out your <span style="color: #1db954;">Spotify</span> stats</h3>
+      <button @click="loginToSpotify"> Login to Spotify</button>
+    </section>
   </div>
 </template>
 
@@ -24,3 +26,51 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  * { margin: 0 !important;
+    padding: 0; 
+    box-sizing: border-box;
+  }
+
+  div {    
+    background-color: rgb(18,18,18);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    min-height: fit-content;
+  }
+
+  section {
+    background-color: rgb(33,33,33);
+    height: 95vh;
+    width: 95vw;
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  h3 {
+    font-size:calc(12px + 10vw);
+    font-family: "Circular", sans-serif;
+    color: white;
+    padding: 20px;
+    padding-bottom: 15vh;
+    padding-top: 15vh;
+  }
+
+  button {
+    border-radius: 10px;
+    border: none;
+    padding: 20px;
+    text-decoration: none;
+    background-color: rgb(255, 255, 255, 0.3);
+    color: white;
+    font-family: "Circular" serif;
+  }
+
+  button:hover {
+    background-color: rgb(255, 255, 255, 0.7);
+  }
+</style>

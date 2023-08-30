@@ -37,3 +37,19 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  div {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: rgb(33, 33, 33);
+  }
+
+  h1 {
+    color: #1db954;
+    font-size: 50px;
+    font-family: "Poppins", sans-serif;
+  }
+</style>
