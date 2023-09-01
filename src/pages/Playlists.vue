@@ -12,6 +12,16 @@
       <div v-if="activeSection === 'home'">
         <h1>Lets Get Started</h1>
         <h2>Global Top Tracks</h2>
+        <ul>
+          <li v-for="(track, index) in globalTopTracks" :key="track.id">
+          <h3>{{ index + 1 }}</h3>
+          <img :src="track.album.images[0].url" alt="Track Album" />
+          <div>
+            <h3>{{ track.name }}</h3>
+            <h3>{{ track.artists[0].name }}</h3>
+        </div>
+      </li>
+    </ul>
       </div>
       <div v-else-if="activeSection === 'topTracks'">
         <h1>Your Top Tracks</h1>
@@ -21,7 +31,7 @@
         <h2 style="margin-top: 20px;">{{ trackTimeTitle }}</h2>
         <ul>
           <li v-for="(track, index) in topTracks" :key="track.id">
-            <h3>{{ trackCount[index] }}</h3> <!-- Display the count for each track -->
+            <h3>{{ trackCount[index] }}</h3>
             <img :src="track.album.images[0].url" alt="Track Album" />
             <div>
               <h3>{{ track.name }}</h3>
@@ -29,6 +39,24 @@
             </div>
           </li>
          </ul>
+      </div>
+      <div v-else-if="activeSection === 'topArtists'">
+        <h1>Your Top Artists</h1>
+        <button @click="getTopArtists('short_term')">Last 4 Weeks</button>
+        <button @click="getTopArtists('medium_term')">Last 6 Months</button>
+        <button @click="getTopArtists('long_term')">All Time</button>
+
+        <h2 style="margin-top: 20px;">{{ artistTimeTitle }}</h2>
+        <ul>
+          <li v-for="(artist, index) in topArtists" :key="artist.id">
+            <h3>{{ index + 1 }}</h3>
+            <img :src="artist.images[0].url" alt="Artist Image" />
+            <div>
+              <h3>{{ artist.name }}</h3>
+            </div>
+          </li>
+        </ul>
+
       </div>
     </section>
     <section class="acc">
@@ -58,7 +86,9 @@ export default {
       activeSection: 'home',
       stat: null,
       timeRange: 'null',
-      trackTimeTitle: 'Past 4 Weeks'
+      trackTimeTitle: 'Past 4 Weeks',
+      artistTimeTitle: 'Past 4 Weeks',
+      globalTopTracks: []
     }
   },
   created() {
@@ -73,21 +103,49 @@ export default {
         this.profilePhoto = response.data.images[0]?.url || '';
         this.followersCount = response.data.followers.total || 0;
         
+        //fetch global 50
+        const playlistId = '37i9dQZEVXbMDoHDwVN2tF';
+
+        axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+          headers: {
+            Authorization: `Bearer ${spotifyAccessToken}`,
+          },
+        })
+        .then(response => {
+          this.globalTopTracks = response.data.items.map(item => item.track);
+        })
+        .catch(error => {
+          console.error('Error fetching playlist tracks:', error);
+        });
+
         // Fetch top tracks
         axios.get('https://api.spotify.com/v1/me/top/tracks', {
             headers: { Authorization: `Bearer ${spotifyAccessToken}` },
             params: {
-              time_range: 'short_term', // or 'medium_term' or 'long_term'
-              limit: 50, // Number of tracks to fetch
+              time_range: 'short_term',
+              limit: 50,
             },
-          })
-          .then(topTracksResponse => {
-            this.topTracks = topTracksResponse.data.items;
-            this.rank += 1;
-          })
-          .catch(error => {
-            console.error('Error fetching top tracks:', error);
-          });
+        })
+        .then(topTracksResponse => {
+          this.topTracks = topTracksResponse.data.items;
+          this.rank += 1;
+        })
+        .catch(error => {
+          console.error('Error fetching top tracks:', error);
+        });
+      
+        //fetch top artists
+        axios.get('https://api.spotify.com/v1/me/top/artists', {
+          headers: { Authorization: `Bearer ${spotifyAccessToken}` },
+          params: {
+            time_range: 'short_term',
+            limit: 50,
+          },
+        })
+        .then(topArtistsResponse => {
+          this.topArtists = topArtistsResponse.data.items;
+          this.rank += 1;
+        })
       })
       .catch(error => {
         console.error('Error fetching username:', error);
@@ -105,8 +163,8 @@ export default {
       axios.get('https://api.spotify.com/v1/me/top/tracks', {
             headers: { Authorization: `Bearer ${spotifyAccessToken}` },
             params: {
-              time_range: timeRange, // or 'medium_term' or 'long_term'
-              limit: 50, // Number of tracks to fetch
+              time_range: timeRange,
+              limit: 50,
             },
           })
           .then(topTracksResponse => {
@@ -123,6 +181,30 @@ export default {
           .catch(error => {
             console.error('Error fetching top tracks:', error);
           });
+    },
+    getTopArtists(timeRange) {
+      const spotifyAccessToken = sessionStorage.getItem('SPOTIFY_ACCESS_TOKEN');
+      axios.get('https://api.spotify.com/v1/me/top/artists', {
+        headers: { Authorization: `Bearer ${spotifyAccessToken}` },
+        params: {
+          time_range: timeRange,
+          limit: 50,
+        },
+      })
+      .then(topArtistsResponse => {
+        this.topArtists = topArtistsResponse.data.items;
+        this.rank += 1;
+        if (timeRange == 'short_term') {
+          this.artistTimeTitle = "Past 4 Weeks";
+        } else if (timeRange == 'medium_term') {
+          this.artistTimeTitle = "Past 6 Months"
+        } else if (timeRange == "long_term") {
+          this.artistTimeTitle = "All Time";
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching top artists:', error);
+      });
     }
   },
   computed: {
