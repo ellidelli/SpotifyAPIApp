@@ -17,7 +17,7 @@ export default {
       const params = {
         response_type: 'code',
         client_id: process.env.VUE_APP_CLIENT_ID,
-        scope: 'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public',
+        scope: 'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read',
         redirect_uri: process.env.VUE_APP_REDIRECT_URI,
         state: uuidv4()
       }

@@ -3,22 +3,33 @@
     <section class="sidebar">
       <h1>Explore</h1>
       <ul>
-        <li><a href="#">Top songs</a></li>
-        <li><a href="#">Top artists</a></li>
+        <li><button @click="showSection('home')">Home</button></li>
+        <li><button @click="showSection('topTracks')">Top Tracks</button></li>
+        <li><button @click="showSection('topArtists')">Top Artists</button></li>
       </ul>
     </section>
     <section class="main">
-      <h1>{{topMsg}}</h1>
-      <h2>{{ shorterMsg }}</h2>
-      <ul>
-      <li v-for="track in topTracks" :key="track.id">
-        <img :src="track.album.images[0].url" alt="Track Album" />
-        <div>
-          <h2>{{ track.name }}</h2>
-          <p>{{ track.artists[0].name }}</p>
-        </div>
-      </li>
-    </ul>
+      <div v-if="activeSection === 'home'">
+        <h1>Lets Get Started</h1>
+        <h2>Global Top Tracks</h2>
+      </div>
+      <div v-else-if="activeSection === 'topTracks'">
+        <h1>Your Top Tracks</h1>
+        <button @click="getTopTracks('short_term')">Last 4 Weeks</button>
+        <button @click="getTopTracks('medium_term')">Last 6 Months</button>
+        <button @click="getTopTracks('long_term')">All Time</button>
+        <h2 style="margin-top: 20px;">{{ trackTimeTitle }}</h2>
+        <ul>
+          <li v-for="(track, index) in topTracks" :key="track.id">
+            <h3>{{ trackCount[index] }}</h3> <!-- Display the count for each track -->
+            <img :src="track.album.images[0].url" alt="Track Album" />
+            <div>
+              <h3>{{ track.name }}</h3>
+              <h3>{{ track.artists[0].name }}</h3>
+            </div>
+          </li>
+         </ul>
+      </div>
     </section>
     <section class="acc">
       <h1>Your Account</h1>
@@ -42,12 +53,15 @@ export default {
       username: '',
       profilePhoto: '',
       followersCount: '',
-      topMsg: 'Lets get started',
-      shorterMsg: 'Global Top Tracks',
-      topTracks: []
+      topTracks: [],
+      rank: '',
+      activeSection: 'home',
+      stat: null,
+      timeRange: 'null',
+      trackTimeTitle: 'Past 4 Weeks'
     }
   },
-    created() {
+  created() {
     const spotifyAccessToken = sessionStorage.getItem('SPOTIFY_ACCESS_TOKEN');
     if (spotifyAccessToken) {
       axios.get('https://api.spotify.com/v1/me', {
@@ -55,6 +69,7 @@ export default {
       })
       .then(response => {
         this.username = response.data.display_name;
+        console.log(response.data.images)
         this.profilePhoto = response.data.images[0]?.url || '';
         this.followersCount = response.data.followers.total || 0;
         
@@ -63,11 +78,12 @@ export default {
             headers: { Authorization: `Bearer ${spotifyAccessToken}` },
             params: {
               time_range: 'short_term', // or 'medium_term' or 'long_term'
-              limit: 10, // Number of tracks to fetch
+              limit: 50, // Number of tracks to fetch
             },
           })
           .then(topTracksResponse => {
             this.topTracks = topTracksResponse.data.items;
+            this.rank += 1;
           })
           .catch(error => {
             console.error('Error fetching top tracks:', error);
@@ -79,6 +95,40 @@ export default {
     } else {
       return this.$router.push('/');
     }
+  },
+  methods: {
+    showSection(section) {
+      this.activeSection = section;
+    },
+    getTopTracks(timeRange) {
+      const spotifyAccessToken = sessionStorage.getItem('SPOTIFY_ACCESS_TOKEN');
+      axios.get('https://api.spotify.com/v1/me/top/tracks', {
+            headers: { Authorization: `Bearer ${spotifyAccessToken}` },
+            params: {
+              time_range: timeRange, // or 'medium_term' or 'long_term'
+              limit: 50, // Number of tracks to fetch
+            },
+          })
+          .then(topTracksResponse => {
+            this.topTracks = topTracksResponse.data.items;
+            this.rank += 1;
+            if (timeRange == 'short_term') {
+              this.trackTimeTitle = "Past 4 Weeks";
+            } else if (timeRange == 'medium_term') {
+              this.trackTimeTitle = "Past 6 Months"
+            } else if (timeRange == "long_term") {
+              this.trackTimeTitle = "All Time";
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching top tracks:', error);
+          });
+    }
+  },
+  computed: {
+    trackCount() {
+      return this.topTracks.map((track, index) => index + 1);
+    },
   }
 }
 </script>
@@ -87,17 +137,20 @@ export default {
   .layout {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items:flex-start;
     justify-content: space-between;
     width: 100%;
     height: 100vh;
     background-color: rgb(18, 18, 18);
+    position: absolute;
   }
 
   .sidebar {
     background-color: rgb(33, 33, 33);
     border-radius: 10px;
-    height: 95vh;
+    margin-top: 20px;
+    min-height: 95vh;
+    height: fit-content;
     width: 13.5vw;
     margin-left: 1vw;
     display: flex;
@@ -107,8 +160,10 @@ export default {
   .main {
     background-color: rgb(33, 33, 33);
     border-radius: 10px;
+    margin-top: 20px;
     height: 95vh;
     width: 66.5vw;
+    overflow:scroll;
   }
 
   .main h2 {
@@ -117,7 +172,9 @@ export default {
   .acc {
     background-color: rgb(33, 33, 33);
     border-radius: 10px;
-    height: 95vh;
+    margin-top: 20px;
+    min-height: 95vh;
+    height: fit-content;
     width: 16.5vw;
     margin-right: 1vw;
   }
@@ -205,4 +262,45 @@ export default {
   button:hover {
     background-color: rgb(255, 255, 255, 0.7);
   }
+
+  .main > div > ul > li {
+    padding-left: 30px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .main > div > ul > li > img {
+    max-height: 5vh;
+    width: auto;
+    border-radius: 5px;
+  }
+
+  .sidebar > ul >li > button {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2vw;
+    color: #b3b3b3;
+  }
+
+  .sidebar > ul >li > button:hover {
+    background-color: #535353;
+    border-radius: 10px;
+  }
+  .main > div > button {
+    margin: 0;
+    margin-left: 30px;
+    font-size: 1vw;
+    padding: 1vh 2vw;
+    background-color: #1db954;
+    border-radius: 5px;
+  }
+  .main > div > button:hover {
+    margin: 0;
+    margin-left: 30px;
+    font-size: 1vw;
+    padding: 1vh 2vw;
+    background-color: rgb(29,185,84, 0.5);
+    border-radius: 5px;
+  }
+
 </style>
