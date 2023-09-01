@@ -113,6 +113,7 @@ export default {
         })
         .then(response => {
           this.globalTopTracks = response.data.items.map(item => item.track);
+          console.log(this.globalTopTracks);
         })
         .catch(error => {
           console.error('Error fetching playlist tracks:', error);
