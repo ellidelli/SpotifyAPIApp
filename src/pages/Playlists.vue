@@ -100,7 +100,7 @@ export default {
       .then(response => {
         this.username = response.data.display_name;
         console.log(response.data.images)
-        this.profilePhoto = response.data.images[0]?.url || '';
+        this.profilePhoto = response.data.images[1]?.url || '';
         this.followersCount = response.data.followers.total || 0;
         
         //fetch global 50
