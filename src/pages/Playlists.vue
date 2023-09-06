@@ -72,7 +72,6 @@
 
 <script>
 import axios from 'axios'
-import Vibrant from 'node-vibrant';
 
 export default {
   name: 'Data',
