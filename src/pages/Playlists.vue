@@ -93,7 +93,7 @@ export default {
     }
   },
   created() {
-    const spotifyAccessToken = sessionStorage.getItem('SPOTIFY_ACCESS_TOKEN');
+    const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN')
     if (spotifyAccessToken) {
       axios.get('https://api.spotify.com/v1/me', {
         headers: { Authorization: `Bearer ${spotifyAccessToken}` },
@@ -161,7 +161,7 @@ export default {
       this.activeSection = section;
     },
     getTopTracks(timeRange) {
-      const spotifyAccessToken = sessionStorage.getItem('SPOTIFY_ACCESS_TOKEN');
+      const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN')
       axios.get('https://api.spotify.com/v1/me/top/tracks', {
         headers: { Authorization: `Bearer ${spotifyAccessToken}` },
         params: {
@@ -185,7 +185,7 @@ export default {
         });
     },
     getTopArtists(timeRange) {
-      const spotifyAccessToken = sessionStorage.getItem('SPOTIFY_ACCESS_TOKEN');
+      const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN')
       axios.get('https://api.spotify.com/v1/me/top/artists', {
         headers: { Authorization: `Bearer ${spotifyAccessToken}` },
         params: {
