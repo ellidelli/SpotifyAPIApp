@@ -21,7 +21,22 @@ const routes = [
     path: '/playlists',
     name: 'Playlists',
     component: Playlists
-  }
+  }, 
+  {
+    path: '/global',
+    name: 'Global',
+    component: Playlists
+  }, 
+  {
+    path: '/toptracks',
+    name: 'Top TracKS',
+    component: Playlists
+  },
+  {
+    path: '/topartists',
+    name: 'Top Artists',
+    component: Playlists
+  }, 
 ]
 
 const router = new VueRouter({

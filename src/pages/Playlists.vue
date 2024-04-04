@@ -1,15 +1,8 @@
 <template>
   <div class="layout">
-    <section class="sidebar">
-      <h1>Explore</h1>
-      <ul>
-        <li><button @click="showSection('home')">Home</button></li>
-        <li><button @click="showSection('topTracks')">Top Tracks</button></li>
-        <li><button @click="showSection('topArtists')">Top Artists</button></li>
-      </ul>
-    </section>
+    <Sidebar></Sidebar>
     <section class="main">
-      <div v-if="activeSection === 'home'">
+      <div v-if="$route.path === '/global'">
         <h1>Lets Get Started</h1>
         <h2>Global Top Tracks</h2>
         <ul>
@@ -23,7 +16,7 @@
           </li>
         </ul>
       </div>
-      <div v-else-if="activeSection === 'topTracks'">
+      <div v-else-if="$route.path === '/toptracks'">
         <h1>Your Top Tracks</h1>
         <button @click="getTopTracks('short_term')">Last 4 Weeks</button>
         <button @click="getTopTracks('medium_term')">Last 6 Months</button>
@@ -40,7 +33,7 @@
           </li>
         </ul>
       </div>
-      <div v-else-if="activeSection === 'topArtists'">
+      <div v-else-if="$route.path === '/topartists'">
         <h1>Your Top Artists</h1>
         <button @click="getTopArtists('short_term')">Last 4 Weeks</button>
         <button @click="getTopArtists('medium_term')">Last 6 Months</button>
@@ -72,9 +65,12 @@
 
 <script>
 import axios from 'axios'
-
+import Sidebar from '../components/sidebar.vue';
 export default {
   name: 'Data',
+  mounted() {
+    console.log("route:", this.$route)
+  },
   data() {
     return {
       playlists: [],
@@ -83,30 +79,27 @@ export default {
       followersCount: '',
       topTracks: [],
       rank: '',
-      activeSection: 'home',
       stat: null,
       timeRange: 'null',
       trackTimeTitle: 'Past 4 Weeks',
       artistTimeTitle: 'Past 4 Weeks',
       globalTopTracks: [],
       accBgColor: ''
-    }
+    };
   },
   created() {
-    const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN')
+    const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN');
     if (spotifyAccessToken) {
       axios.get('https://api.spotify.com/v1/me', {
         headers: { Authorization: `Bearer ${spotifyAccessToken}` },
       })
         .then(response => {
           this.username = response.data.display_name;
-          console.log(response.data.images)
+          console.log(response.data.images);
           this.profilePhoto = response.data.images[1]?.url || '';
           this.followersCount = response.data.followers.total || 0;
-
           //fetch global 50
           const playlistId = '37i9dQZEVXbMDoHDwVN2tF';
-
           axios.get(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
             headers: {
               Authorization: `Bearer ${spotifyAccessToken}`,
@@ -119,7 +112,6 @@ export default {
             .catch(error => {
               console.error('Error fetching playlist tracks:', error);
             });
-
           // Fetch top tracks
           axios.get('https://api.spotify.com/v1/me/top/tracks', {
             headers: { Authorization: `Bearer ${spotifyAccessToken}` },
@@ -135,7 +127,6 @@ export default {
             .catch(error => {
               console.error('Error fetching top tracks:', error);
             });
-
           //fetch top artists
           axios.get('https://api.spotify.com/v1/me/top/artists', {
             headers: { Authorization: `Bearer ${spotifyAccessToken}` },
@@ -147,21 +138,22 @@ export default {
             .then(topArtistsResponse => {
               this.topArtists = topArtistsResponse.data.items;
               this.rank += 1;
-            })
+            });
         })
         .catch(error => {
           console.error('Error fetching username:', error);
         });
-    } else {
+    }
+    else {
       return this.$router.push('/');
     }
   },
   methods: {
-    showSection(section) {
-      this.activeSection = section;
-    },
+    // showSection(section) {
+    //   this.activeSection = section;
+    // },
     getTopTracks(timeRange) {
-      const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN')
+      const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN');
       axios.get('https://api.spotify.com/v1/me/top/tracks', {
         headers: { Authorization: `Bearer ${spotifyAccessToken}` },
         params: {
@@ -174,9 +166,11 @@ export default {
           this.rank += 1;
           if (timeRange == 'short_term') {
             this.trackTimeTitle = "Past 4 Weeks";
-          } else if (timeRange == 'medium_term') {
-            this.trackTimeTitle = "Past 6 Months"
-          } else if (timeRange == "long_term") {
+          }
+          else if (timeRange == 'medium_term') {
+            this.trackTimeTitle = "Past 6 Months";
+          }
+          else if (timeRange == "long_term") {
             this.trackTimeTitle = "All Time";
           }
         })
@@ -185,7 +179,7 @@ export default {
         });
     },
     getTopArtists(timeRange) {
-      const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN')
+      const spotifyAccessToken = localStorage.getItem('SPOTIFY_ACCESS_TOKEN');
       axios.get('https://api.spotify.com/v1/me/top/artists', {
         headers: { Authorization: `Bearer ${spotifyAccessToken}` },
         params: {
@@ -198,16 +192,17 @@ export default {
           this.rank += 1;
           if (timeRange == 'short_term') {
             this.artistTimeTitle = "Past 4 Weeks";
-          } else if (timeRange == 'medium_term') {
-            this.artistTimeTitle = "Past 6 Months"
-          } else if (timeRange == "long_term") {
+          }
+          else if (timeRange == 'medium_term') {
+            this.artistTimeTitle = "Past 6 Months";
+          }
+          else if (timeRange == "long_term") {
             this.artistTimeTitle = "All Time";
           }
         })
         .catch(error => {
           console.error('Error fetching top artists:', error);
         });
-
     }
   },
   computed: {
@@ -215,6 +210,7 @@ export default {
       return this.topTracks.map((track, index) => index + 1);
     },
   },
+  components: { Sidebar }
 };
 
 </script>
@@ -227,24 +223,12 @@ export default {
   justify-content: space-between;
   width: 100%;
   height: 100vh;
-  background-color: rgb(18, 18, 18);
+  background-color: rgb(0 0 0);
   position: absolute;
 }
 
-.sidebar {
-  background-color: rgb(33, 33, 33);
-  border-radius: 10px;
-  margin-top: 20px;
-  min-height: 95vh;
-  height: fit-content;
-  width: 13.5vw;
-  margin-left: 1vw;
-  display: flex;
-  flex-direction: column;
-}
-
 .main {
-  background-color: rgb(33, 33, 33);
+  background: linear-gradient(to bottom, rgb(35 35 35) 10%, rgb(18 18 18) 90%);
   border-radius: 10px;
   margin-top: 20px;
   height: 95vh;
@@ -257,7 +241,7 @@ export default {
 }
 
 .acc {
-  /* background-color: rgb(33, 33, 33); */
+  background-color: rgb(18 18 18);
   border-radius: 10px;
   margin-top: 20px;
   min-height: 95vh;
@@ -265,11 +249,6 @@ export default {
   width: 16.5vw;
   margin-right: 1vw;
 }
-
-/* .main>div>ul>li>img {
-  height: 15vh;
-  width: auto;
-} */
 
 .acc>h1 {
   padding-left: 0;
@@ -288,22 +267,21 @@ img {
   width: 13vw;
   height: 13vw;
   border-radius: 50%;
-  /* margin-bottom: 10px; */
 }
 
 h1 {
   text-align: left;
-  color: white;
+  color: rgb(255 255 255);
   font-family: "Circular", sans-serif;
-  font-size: 2vw;
+  font-size: 1.5vw;
   padding-left: 15px;
 }
 
 h2 {
   text-align: left;
-  color: white;
+  color: rgb(255 255 255);
   font-family: "Circular", sans-serif;
-  font-size: 1.5vw;
+  font-size: 1.3vw;
   margin: 7px;
   font-weight: 700;
 }
@@ -341,20 +319,6 @@ ul li a {
   text-align: left;
 }
 
-button {
-  border-radius: 10px;
-  border: none;
-  padding: 20px;
-  text-decoration: none;
-  background-color: rgb(255, 255, 255, 0);
-  color: white;
-  margin-top: 20vh;
-}
-
-button:hover {
-  background-color: rgb(255, 255, 255, 0.7);
-}
-
 .main>div>ul>li {
   padding-left: 30px;
   display: flex;
@@ -366,18 +330,6 @@ button:hover {
   max-height: 5vh;
   width: auto;
   border-radius: 5px;
-}
-
-.sidebar>ul>li>button {
-  margin: 0;
-  padding: 0;
-  font-size: 1.2vw;
-  color: #b3b3b3;
-}
-
-.sidebar>ul>li>button:hover {
-  background-color: #535353;
-  border-radius: 10px;
 }
 
 .main>div>button {
