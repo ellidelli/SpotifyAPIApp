@@ -349,4 +349,46 @@ ul li a {
   background-color: rgb(29, 185, 84, 0.5);
   border-radius: 5px;
 }
+
+@media screen and (max-width: 600px) {
+  .acc {
+    display: none;
+  }
+
+  .layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(0 0 0);
+    position: absolute;
+  }
+
+  .main {
+    width: 98vw;
+  }
+
+  h1 {
+    font-size: 5vw;
+  }
+
+  h2 {
+    font-size: 4vw;
+  }
+
+  h3 {
+    font-size: 3vw;
+  }
+
+  li {
+    padding-left: 0;
+  }
+
+  .main button {
+    width: fit-content;
+    font-size: 3vw !important;
+  }
+}
 </style>

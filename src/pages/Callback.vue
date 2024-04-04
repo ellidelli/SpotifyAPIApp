@@ -29,7 +29,7 @@ export default {
       return axios.post('https://accounts.spotify.com/api/token', body, { headers })
         .then(response => {
           localStorage.setItem('SPOTIFY_ACCESS_TOKEN', response.data.access_token);
-          return this.$router.push('Playlists')
+          return this.$router.push('global')
         })
 
     }

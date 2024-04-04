@@ -18,7 +18,7 @@ export default {
       return this.generateCodeChallenge(codeVerifier)
         .then(codeChallenge => {
           const state = this.generateRandomString(16)
-          const scope = 'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read'
+          const scope = 'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-top-read user-read-private '
           localStorage.setItem('code_verifier', codeVerifier)
           const args = new URLSearchParams({
             response_type: 'code',

@@ -96,4 +96,48 @@ h1 {
     font-size: 1.5vw;
     padding-left: 15px;
 }
+
+@media screen and (max-width: 600px) {
+    .sidebar {
+        background-color: rgb(18 18 18);
+        border-radius: 10px;
+        margin-top: 20px;
+        min-height: 5vh;
+        height: fit-content;
+        width: 99vw;
+        margin-left: 1vw;
+        margin-top: 1vh;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar button {
+        font-size: 3vw;
+        max-height: fit-content;
+        max-width: fit-content;
+        padding: 1.5vh;
+        border-radius: 5px;
+        margin-right: 3vw;
+        font-weight: 600 !important;
+    }
+
+    .sidebar button img {
+        max-width: 100%;
+        max-height: 3vw;
+    }
+
+    .sidebar button.active {
+        max-height: 4.5vh;
+    }
+
+    .sidebar button:hover {
+        max-height: 4.5vh;
+    }
+
+    .sidebar h1 {
+        display: none;
+    }
+}
 </style>
